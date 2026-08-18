@@ -53,6 +53,4 @@ jobs:
           terraform apply -auto-approve
 
       
-        run: |
-          Write-Host "TERRAFORM APPLY"
-          terraform apply -auto-approve
+       
