@@ -14,25 +14,20 @@ permissions:
 
 jobs:
   terraform:
-    runs-on: ubuntu-latest
+
+    runs-on: github_runner
 
     defaults:
       run:
         working-directory: ./azurerm_resource_group
 
     steps:
+
       - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
-
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          client-id: "de0d293e-36da-49de-9662-fc043b63589e"
-          tenant-id: "4eda09ca-f09f-4db9-86ae-c6b2e0ffc6ce"
-          subscription-id: "0b3701d7-b87c-4c64-ba31-5ff3f5843d15"
 
       - name: Terraform Init
         run: terraform init
@@ -43,5 +38,14 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
 
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
       - name: Terraform Plan
         run: terraform plan
+
+      
