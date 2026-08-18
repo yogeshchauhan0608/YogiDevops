@@ -1,4 +1,4 @@
-name: Terraform Azure
+name: Terraform self hosted runner Deployment
 
 on:
   push:
@@ -6,46 +6,50 @@ on:
       - main
       - feature
 
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: read
-  id-token: write
 
 jobs:
   terraform:
+    name: Terraform self hosted runner Deployment
 
     runs-on: github_runner
 
     defaults:
       run:
-        working-directory: ./azurerm_resource_group
+        shell: powershell
+        working-directory: ./environments/dev
 
     steps:
-
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+      - name: Check Azure CLI
+        run: |
+          Write-Host "AZURE CLI VERSION"
+          az version
 
       - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform Format
-        run: terraform fmt -check
+        run: |
+          Write-Host "TERRAFORM INIT"
+          terraform init
 
       - name: Terraform Validate
-        run: terraform validate
-
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        run: |
+          Write-Host "TERRAFORM VALIDATE"
+          terraform validate
 
       - name: Terraform Plan
-        run: terraform plan
+        run: |
+          Write-Host "TERRAFORM PLAN"
+          terraform plan -no-color
 
-      
+      - name: Terraform Apply
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          Write-Host "TERRAFORM APPLY"
+          terraform apply -auto-approve
