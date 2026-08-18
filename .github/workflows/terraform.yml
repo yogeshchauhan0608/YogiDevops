@@ -17,12 +17,15 @@ jobs:
   terraform:
     name: Terraform self hosted runner Deployment
 
-    runs-on: github_runner
+    runs-on:
+      - self-hosted
+      - windows
+      - x64
 
     defaults:
       run:
         shell: powershell
-        working-directory: ./environments/dev
+        working-directory: ./azurerm_resource_group
 
     steps:
       - name: Checkout Code
