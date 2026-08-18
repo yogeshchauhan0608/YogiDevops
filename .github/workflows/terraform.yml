@@ -50,9 +50,9 @@ jobs:
         run: |
           Write-Host "TERRAFORM PLAN"
           terraform plan -no-color
+          terraform apply -auto-approve
 
-      - name: Terraform Apply
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      
         run: |
           Write-Host "TERRAFORM APPLY"
           terraform apply -auto-approve
